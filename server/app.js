@@ -3,6 +3,7 @@ const notFoundMiddleware = require("./middleware/not-found");
 const errorMiddleware = require("./middleware/error-handler");
 const connectDB = require("./db/connect");
 const productsRouter = require("./routes/products");
+const cors = require("cors");
 require("express-async-errors");
 require("dotenv").config();
 
@@ -10,10 +11,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-
-app.get("/", (req, res) => {
-  res.send("<h1>Store API</h1><a href='/api/v1/products'>Products route</a>");
-});
+app.use(cors());
 
 app.use("/api/v1/products", productsRouter);
 
