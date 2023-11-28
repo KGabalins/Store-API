@@ -52,7 +52,10 @@ const HomePage = () => {
       .then(({ data }) => {
         setProducts(data.products);
         setTotalProducts(data.totalProducts);
-        setTotalPages(data.totalPages);
+        setFilter((prevState) => {
+          return { ...prevState, page: data.page };
+        });
+        setTotalPages(Math.ceil(data.totalProducts / 10));
       })
       .catch((err) => console.log(err));
   }, [URL]);
@@ -101,11 +104,11 @@ const HomePage = () => {
 
   return (
     <>
-      <nav className="fixed w-[300px] h-[100%] overflow-auto bg-green-700 flex flex-col p-2 gap-4">
+      <nav className="fixed w-[300px] h-[100%] overflow-auto bg-slate-500 flex flex-col gap-4">
         <h2 className="text-center text-white font-bold  text-xl">
           Filter the store
         </h2>
-        <div className="flex gap-2">
+        <div className="flex gap-2 ">
           <label htmlFor="featured" className=" text-white text-lg">
             Featured
           </label>
@@ -212,7 +215,7 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-        <div className="text-white bg-green-900 flex">
+        <div className="text-white bg-slate-600 flex">
           <span className="mr-2">
             Pages: {filter.page} of {totalPages}
           </span>
@@ -224,7 +227,10 @@ const HomePage = () => {
           </button>
         </div>
       </nav>
-      <div className="ml-[300px] bg-green-200 h-screen">
+      <div className="ml-[300px] bg-blue-200">
+        <h2 className="text-center p-4 font-bold text-4xl text-zinc-900">
+          Furniture shop
+        </h2>
         <ProductList products={products} />
       </div>
     </>

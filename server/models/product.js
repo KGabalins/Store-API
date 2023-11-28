@@ -15,7 +15,7 @@ const productSchema = new mongoose.Schema({
   },
   rating: {
     type: Number,
-    default: 4.5,
+    default: 0,
   },
   createdAt: {
     type: Date,
@@ -23,6 +23,7 @@ const productSchema = new mongoose.Schema({
   },
   company: {
     type: String,
+    required: [true, "Product company must be provided"],
     enum: {
       values: ["Ikea", "Liddy", "Caressa", "Marcos"],
       message: "{VALUE} is not supported!",

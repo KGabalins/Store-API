@@ -1,8 +1,9 @@
 const Product = require("../models/product");
+const { StatusCodes } = require("http-status-codes");
 
 const getAllProductsStatic = async (req, res) => {
   const products = await Product.find({ price: { $gt: 30 } }).sort("price");
-  res.status(200).json({ nbHits: products.length, products });
+  res.status(StatusCodes.OK).json({ nbHits: products.length, products });
 };
 
 const getAllProducts = async (req, res) => {
@@ -49,25 +50,45 @@ const getAllProducts = async (req, res) => {
     result = result.select(fieldsList + " createdAt");
   }
 
-  const page = Number(req.query.page) || 1;
+  const totalProducts = await result.clone();
+
+  let page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 10;
+  if ((page - 1) * limit > totalProducts.length) {
+    page = Math.ceil(totalProducts.length / limit);
+  }
   const skip = (page - 1) * limit;
-  // const skip = (page - 1) * 10;
 
   result = result.skip(skip).limit(limit);
 
   const products = await result;
 
-  const total = await Product.find();
-  res.status(200).json({
+  // const total = await Product.find();
+  res.status(StatusCodes.OK).json({
     nbHits: products.length,
     products,
-    totalProducts: total.length,
-    totalPages: Math.ceil(total.length / limit),
+    page,
+    totalProducts: totalProducts.length,
   });
+};
+
+const createProduct = async (req, res) => {
+  console.log(req.body);
+
+  try {
+    const result = await Product.create(req.body);
+    console.log(result);
+  } catch (error) {
+    return res.status(StatusCodes.BAD_REQUEST).json({ msg: error });
+  }
+
+  res.status(StatusCodes.CREATED).json({ msg: "Product created!" });
+
+  // const result = await Product.create(req.body)
 };
 
 module.exports = {
   getAllProducts,
   getAllProductsStatic,
+  createProduct,
 };
